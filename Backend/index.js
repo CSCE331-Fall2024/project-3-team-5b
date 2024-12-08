@@ -187,6 +187,17 @@ app.post('/api/delete-image', async (req, res) => {
 });
 
 
+app.get('/my-api/order-history', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM orders');
+        res.json(result.rows);
+    }
+    catch(error) {
+        console.error('Database query error:', error);
+        res.status(500).send('Server error');
+    }
+});
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

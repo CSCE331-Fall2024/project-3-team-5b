@@ -91,3 +91,11 @@ nav a {
   color: white;
   text-decoration: none;
 }
+
+.left {
+  text-align: left;
+}
+
+.justify {
+  text-align: left;
+}
