@@ -18,6 +18,7 @@ const allowedOrigins = [
 
 const itemComponentsRoutes = require('./my-api/itemComponents');
 const inventoryRoutes = require('./my-api/inventory');
+const salesRoutes = require('./my-api/sales');
 
 /**
  * @description Middleware to enable Cross-Origin Resource Sharing (CORS).
@@ -196,11 +197,20 @@ app.post('/api/menu-items', async (req, res) => {
  * @description Route handlers for inventory and item components.
  */
 app.use('/api/inventory', inventoryRoutes);
+
 app.use('/api/item-components', itemComponentsRoutes);
+
+
+/**
+ * @description Route handlers for sales.
+ */
+app.use('/api/sales', salesRoutes);
 
 /**
  * @description Delete an image from Cloudinary.
  */
+// Image deletion
+
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({

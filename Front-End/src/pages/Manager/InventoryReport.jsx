@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate
 import './InventoryReport.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -16,6 +17,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
  */
 function InventoryReport() {
     const [inventoryData, setInventoryData] = useState([]);
+    const navigate = useNavigate(); // Initialize navigate function
 
     useEffect(() => {
         /**
@@ -25,8 +27,8 @@ function InventoryReport() {
         const fetchInventory = async () => {
             try {
                 const baseUrl = window.location.hostname === 'localhost'
-                ? 'http://localhost:5000'
-                : import.meta.env.VITE_POS_API_BASE_URL;
+                    ? 'http://localhost:5000'
+                    : import.meta.env.VITE_POS_API_BASE_URL;
                 const response = await axios.get(`${baseUrl}/api/inventory`);
                 console.log('Fetched inventory data:', response.data);
                 // Ensure quantity is converted to numbers
@@ -87,6 +89,10 @@ function InventoryReport() {
     return (
         <div className="inventory-report-container">
             <h2>Inventory Report</h2>
+
+            {/* Back Button */}
+            <button onClick={() => navigate(-1)} className="back-button">Back</button>
+
             <div className="chart-container">
                 <Bar data={chartData} options={chartOptions} />
             </div>
