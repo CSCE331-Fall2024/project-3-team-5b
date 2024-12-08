@@ -6,10 +6,22 @@ import './InventoryReport.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+/**
+ * InventoryReport Component
+ * Displays an inventory report with a bar chart representing item quantities.
+ * Fetches inventory data from a backend API and visualizes it using Chart.js.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered InventoryReport component with a bar chart.
+ */
 function InventoryReport() {
     const [inventoryData, setInventoryData] = useState([]);
 
     useEffect(() => {
+        /**
+         * Fetches inventory data from the backend API and formats it for the chart.
+         * Ensures the quantity is a number and sets the data in the state.
+         */
         const fetchInventory = async () => {
             try {
                 const response = await axios.get('http://localhost:5000/api/inventory');

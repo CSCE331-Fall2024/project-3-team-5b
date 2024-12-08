@@ -9,6 +9,15 @@ import './CustomerHome.css';
 import Navbar from './Navbar';
 import { AccessibilityContext } from '../../../hooks/AccessibilityContext';
 
+/**
+ * `CustomerHome` is the main landing page for the customer, featuring a button to start an order
+ * and accessibility options like changing the language, enabling high-contrast mode, and enlarging text.
+ * It utilizes context to determine if text should be magnified based on user preferences.
+ * 
+ * @component
+ * @example
+ * return <CustomerHome />
+ */
 function CustomerHome() {
   const navigate = useNavigate(); 
   const [style, setStyle] = useState({
@@ -17,6 +26,12 @@ function CustomerHome() {
   });
   const { isMagnified } = useContext(AccessibilityContext);
 
+  /**
+   * Navigates to the menu page when the start order button is clicked.
+   * 
+   * @function
+   * @returns {void}
+   */
   const handleStartOrder = () => {
     navigate('/menu'); 
   };
