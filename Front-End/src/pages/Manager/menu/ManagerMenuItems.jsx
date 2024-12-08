@@ -6,6 +6,10 @@ import MenuItemEditForm from './MenuItemEditForm';
 import Navbar from '../../Authentication/Navbar';
 import './ManagerMenuItems.css';
 
+/**
+ * ManagerMenuItems is a React component that allows the management of menu items.
+ * It displays a table of menu items with options to edit, delete, or add new items.
+ */
 export const ManagerMenuItems = () => {
     const { data: menuItemsData, loading, error, refetch } = useFetchData("menu-items");
     const [editRow, setEditRow] = useState(null);
@@ -18,19 +22,31 @@ export const ManagerMenuItems = () => {
     const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
     const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_MENU_ITEM_PRESET;
 
+    /**
+     * Handles the click event for editing a menu item.
+     * @param {Object} row - The row data for the menu item to be edited.
+     */
     const handleEditClick = (row) => {
         setEditRow(row);
         setNewImage(null); // Reset new image state
     };
-    // Utility to extract public_id from Cloudinary URL
+
+    /**
+     * Utility to extract the public_id from a Cloudinary URL.
+     * @param {string} publicId - The Cloudinary URL.
+     * @returns {string} - The extracted public_id without the version or file extension.
+     */
     const extractPublicId = (publicId) => {
-        // Remove the version prefix (e.g., v1732658861/) and the file extension
         const parts = publicId.split('/');
-        const startIndex = parts.findIndex((part) => part === 'MenuItem'); // Find the folder name
-        const cleanId = parts.slice(startIndex).join('/'); // Join everything after 'MenuItem'
+        const startIndex = parts.findIndex((part) => part === 'MenuItem');
+        const cleanId = parts.slice(startIndex).join('/');
         return cleanId.replace(/\.[^/.]+$/, ''); // Remove the file extension
     };
     
+    /**
+     * Handles the click event for deleting a menu item.
+     * @param {Object} row - The row data for the menu item to be deleted.
+     */
     const handleDeleteClick = async (row) => {
         const isSure = window.confirm("Are you sure you want to delete this item?");
         if (!isSure) return;
@@ -51,6 +67,9 @@ export const ManagerMenuItems = () => {
         }
     };
 
+    /**
+     * Prepares a new menu item row to be created.
+     */
     const handleCreateClick = () => {
         setCreateRow({
             name: "",
@@ -61,18 +80,20 @@ export const ManagerMenuItems = () => {
             hasdrink: false,
             image: null,
         });
-    }
+    };
 
+    /**
+     * Handles the creation of a new menu item.
+     */
     const handleCreateMenuItem = async () => {
         try {
             let uploadedImageUrl = null;
     
-            // Upload image to Cloudinary if a new image is selected
             if (newImage) {
                 const formData = new FormData();
                 formData.append("file", newImage);
                 formData.append("upload_preset", uploadPreset);
-                // Generate the filename based on createRow.name
+
                 const customFilename = createRow.name
                 .split(" ")
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -88,13 +109,12 @@ export const ManagerMenuItems = () => {
                 const data = await response.json();
                 uploadedImageUrl = data.secure_url; // Get the Cloudinary URL
             }
-            // Prepare the new menu item
+    
             const newRow = {
                 ...createRow,
                 image: uploadedImageUrl, // Use the uploaded Cloudinary URL
             };
     
-            // Send new menu item data to the backend
             await fetch(`${baseUrl}/api/menu-items`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -109,27 +129,35 @@ export const ManagerMenuItems = () => {
         }
     };    
 
+    /**
+     * Cancels the creation of a new menu item.
+     */
     const handleCreateCancel = () => {
         setCreateRow(null);
     };
 
+    /**
+     * Handles the image upload process.
+     * @param {Object} event - The event triggered by selecting an image.
+     */
     const handleImageUpload = (event) => {
         const file = event.target.files[0];
         if (!file) return;
-    
         setNewImage(file); // Save the file locally
     };    
 
+    /**
+     * Saves changes made to an existing menu item.
+     */
     const handleSaveChanges = async () => {
         try {
             let uploadedImageUrl = editRow.image; // Default to the existing image URL
     
-            // If a new image is selected, upload it to Cloudinary
             if (newImage) {
                 const formData = new FormData();
                 formData.append("file", newImage);
                 formData.append("upload_preset", uploadPreset);
-                // Generate the filename based on createRow.name
+
                 const customFilename = editRow.name
                 .split(" ")
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -146,13 +174,11 @@ export const ManagerMenuItems = () => {
                 uploadedImageUrl = data.secure_url; // Get the Cloudinary URL
             }
     
-            // Prepare the updated row
             const updatedRow = {
                 ...editRow,
                 image: uploadedImageUrl, // Use the new Cloudinary URL if available
             };
     
-            // Send updated data to the backend
             await fetch(`${baseUrl}/api/menu-items/${editRow.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -166,8 +192,10 @@ export const ManagerMenuItems = () => {
             console.error("Failed to save changes:", error);
         }
     };
-    
 
+    /**
+     * Cancels the edit process and closes the edit panel.
+     */
     const handleCancel = () => {
         setEditRow(null);
     };
@@ -278,12 +306,12 @@ export const ManagerMenuItems = () => {
                     className='add-button'
                     variant="contained"
                     sx={{
-                        bgcolor: "green", // Green background
-                        color: "white", // White text
+                        bgcolor: "green",
+                        color: "white",
                         "&:hover": {
-                            bgcolor: "darkgreen", // Dark green on hover
+                            bgcolor: "darkgreen",
                         },
-                        mb: 2, // Margin bottom
+                        mb: 2,
                     }}
                     onClick={() => handleCreateClick()}
                 >
@@ -291,7 +319,5 @@ export const ManagerMenuItems = () => {
                 </Button>
             </Paper>
         </>
-        
-
     );
 };

@@ -6,6 +6,19 @@ import Cart from '../Customer/Cart';
 import '../Customer/MenuPage.css';
 import CashierNavbar from './CashierNavbar';
 
+/**
+ * `CashierOrderPage` is the cashier's page for handling the order creation process. 
+ * It allows the cashier to select menu items, sides, entrees, and view the cart.
+ * 
+ * @component
+ * @example
+ * const setShowSidebar = (isVisible) => console.log(isVisible ? 'Sidebar visible' : 'Sidebar hidden');
+ * return <CashierOrderPage setShowSidebar={setShowSidebar} />;
+ * 
+ * @param {Function} setShowSidebar - A function to control the visibility of the sidebar.
+ * 
+ * @returns {JSX.Element} A JSX element representing the cashier's order page, with views for menu selection, side and entree choices, and the cart.
+ */
 function CashierOrderPage({ setShowSidebar }) {
   const [selectedMenuItem, setSelectedMenuItem] = useState(null);
   const [sides] = useState(['Chow Mein', 'Fried Rice', 'White Rice', 'Super Greens']);
@@ -29,6 +42,10 @@ function CashierOrderPage({ setShowSidebar }) {
     'Beijing Beef', 'Broccoli Beef', 'Mushroom Chicken'
   ];
 
+  /**
+   * Handles menu item selection and transitions to the sides view.
+   * @param {Object} item - The selected menu item.
+   */
   const handleMenuItemClick = (item) => {
     setSelectedMenuItem(item);
     setSelectedEntrees([]); // Reset selected entrees
@@ -36,11 +53,18 @@ function CashierOrderPage({ setShowSidebar }) {
     setView('sides');       // Show sides view after selecting a menu item
   };
 
+  /**
+   * Handles the continuation from sides to entrees.
+   * @param {Array} selectedSides - The selected sides.
+   */
   const handleContinueToEntrees = (selectedSides) => {
     setSelectedSides(selectedSides);
     setView('entrees'); // Switch to entrees view
   };
 
+  /**
+   * Handles the continuation from entrees to the cart.
+   */
   const handleContinueToCart = () => {
     setCartItems((prevCartItems) => [
       ...prevCartItems,
@@ -55,6 +79,10 @@ function CashierOrderPage({ setShowSidebar }) {
     setView('cart'); // Switch to cart view
   };
 
+  /**
+   * Handles entree selection.
+   * @param {Array} selected - The selected entrees.
+   */
   const handleSelectEntrees = (selected) => {
     setSelectedEntrees(selected);
   };

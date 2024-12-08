@@ -3,29 +3,54 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import Navbar from './Navbar';
 
+/**
+ * `Login` component provides a page for users to choose between different views: 
+ * Menu Board, Customer View, Manager login, or Cashier login.
+ * The component includes OAuth sign-in for both the Manager and Cashier roles.
+ * 
+ * @component
+ * @example
+ * return <Login />;
+ * 
+ * @returns {JSX.Element} A JSX element representing the login page with buttons for navigation and login actions.
+ */
 function Login() {
   const navigate = useNavigate();
 
   // Button handlers
+  /**
+   * Handles navigation to the menu board page.
+   */
   const onClickMenuBoardHandler = () => {
     navigate('/menu-board');
   };
 
+  /**
+   * Handles OAuth sign-in for the cashier role and navigates to the cashier page.
+   */
   const onClickCashierHandler = () => {
     oauthSignInCashier();
     navigate('/cashier');
   };
 
+  /**
+   * Handles OAuth sign-in for the manager role and navigates to the manager page.
+   */
   const onClickManagerHandler = () => {
     oauthSignInManager();
     navigate('/manager');
   };
 
+  /**
+   * Handles navigation to the customer view page.
+   */
   const onClickCustomerHandler = () => {
     navigate('/customer');
   };
 
-  // OAuth sign-in for Manager
+  /**
+   * Initiates OAuth sign-in for the manager role.
+   */
   function oauthSignInManager() {
     var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
     var form = document.createElement('form');
@@ -53,7 +78,9 @@ function Login() {
     form.submit();
   }
 
-  // OAuth sign-in for Cashier
+  /**
+   * Initiates OAuth sign-in for the cashier role.
+   */
   function oauthSignInCashier() {
     var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
     var form = document.createElement('form');

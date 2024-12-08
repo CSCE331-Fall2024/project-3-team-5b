@@ -9,6 +9,28 @@ import {
 } from "@mui/material";
 import "./MenuItemEditForm.css";
 
+/**
+ * MenuItemEditForm component allows editing of a menu item's details, including name, price, description, and image.
+ * It includes functionality to save changes, cancel edits, and upload a new image.
+ *
+ * @param {Object} props - The props for the component.
+ * @param {Object} props.rowData - The current data for the menu item to edit.
+ * @param {string} props.rowData.name - The name of the menu item.
+ * @param {number|string} props.rowData.base_price - The base price of the menu item.
+ * @param {string} props.rowData.description - A description of the menu item.
+ * @param {number|string|null} props.rowData.maxentrees - The maximum number of entrees allowed for the item.
+ * @param {number|string|null} props.rowData.maxsides - The maximum number of sides allowed for the item.
+ * @param {boolean} props.rowData.hasdrink - Whether the menu item includes a drink.
+ * @param {string|null} props.rowData.image - The URL of the current image associated with the menu item.
+ * @param {function} props.onSave - The function to call when the "Save" button is clicked.
+ * @param {function} props.onCancel - The function to call when the "Cancel" button is clicked.
+ * @param {function} props.onChange - The function to call when a field value changes.
+ * @param {string} props.title - The title of the form (e.g., "Edit Menu Item").
+ * @param {string|null} props.newImage - The new image file selected by the user.
+ * @param {function} props.handleImageUpload - The function to handle image upload.
+ *
+ * @returns {JSX.Element} The rendered form for editing a menu item.
+ */
 const MenuItemEditForm = ({
     rowData,
     onSave,
@@ -20,6 +42,7 @@ const MenuItemEditForm = ({
     handleImageUpload,
 }) => {
     const [imagePreview, setImagePreview] = useState(null);
+
     useEffect(() => {
         if (newImage) {
             const previewUrl = URL.createObjectURL(newImage); // Create a temporary URL for the file
@@ -27,6 +50,9 @@ const MenuItemEditForm = ({
         }
     }, [newImage]);
 
+    /**
+     * Clears the selected image and resets the image-related state.
+     */
     const handleRemoveImage = () => {
         setImagePreview(null);
         setNewImage(null);
