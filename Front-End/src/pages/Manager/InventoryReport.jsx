@@ -24,7 +24,10 @@ function InventoryReport() {
          */
         const fetchInventory = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/inventory');
+                const baseUrl = window.location.hostname === 'localhost'
+                ? 'http://localhost:5000'
+                : import.meta.env.VITE_POS_API_BASE_URL;
+                const response = await axios.get(`${baseUrl}/api/inventory`);
                 console.log('Fetched inventory data:', response.data);
                 // Ensure quantity is converted to numbers
                 const formattedData = response.data.map((item) => ({
