@@ -211,119 +211,111 @@ const InventoryManager = () => {
     }
 
     return (
-        <div>
-            {/* Back Button */}
-            <button className="back-button" onClick={handleBackClick}>Back</button>
+    <div className="inventory-manager">
 
-            <h1></h1>
+        <button className="inventory-manager__back-button" onClick={handleBackClick}>Back</button>
 
-            {/* Error Message */}
-            {error && <div className="error-message">{error}</div>}
+        <div className="inventory-manager__add-item-section">
+            <h2>Add New Item</h2>
+            <form>
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Name"
+                    value={newItem.name}
+                    onChange={handleInputChange}
+                />
+                <input
+                    type="number"
+                    name="quantity"
+                    placeholder="Quantity"
+                    value={newItem.quantity}
+                    onChange={handleInputChange}
+                />
+                <input
+                    type="text"
+                    name="unit"
+                    placeholder="Unit"
+                    value={newItem.unit}
+                    onChange={handleInputChange}
+                />
+                <input
+                    type="number"
+                    name="reorder_level"
+                    placeholder="Reorder Level"
+                    value={newItem.reorder_level}
+                    onChange={handleInputChange}
+                />
+                <button type="button" onClick={handleAddNew}>Add Item</button>
+            </form>
+        </div>
 
-            {/* Add Item Section */}
-            <div className="add-item-section">
-                <h2>Add New Item</h2>
+        <table className="inventory-manager__table">
+            <thead>
+                <tr>
+                    <th onClick={() => handleSort('id')}>ID {sortConfig.key === 'id' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
+                    <th onClick={() => handleSort('name')}>Name {sortConfig.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
+                    <th onClick={() => handleSort('quantity')}>Quantity {sortConfig.key === 'quantity' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
+                    <th onClick={() => handleSort('unit')}>Unit {sortConfig.key === 'unit' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
+                    <th onClick={() => handleSort('reorder_level')}>Reorder Level {sortConfig.key === 'reorder_level' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {inventory.map(item => (
+                    <tr key={item.id}>
+                        <td>{item.id}</td>
+                        <td>{item.name}</td>
+                        <td>{item.quantity}</td>
+                        <td>{item.unit}</td>
+                        <td>{item.reorder_level}</td>
+                        <td>
+                            <button onClick={() => handleEdit(item.id)}>Edit</button>
+                            <button onClick={() => handleDelete(item.id)}>Delete</button>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+
+        {editingItem && (
+            <div className="inventory-manager__edit-item-form">
+                <h2>Edit Item</h2>
                 <form>
                     <input
                         type="text"
                         name="name"
                         placeholder="Name"
-                        value={newItem.name}
+                        value={editingItem.name}
                         onChange={handleInputChange}
                     />
                     <input
                         type="number"
                         name="quantity"
                         placeholder="Quantity"
-                        value={newItem.quantity}
+                        value={editingItem.quantity}
                         onChange={handleInputChange}
                     />
                     <input
                         type="text"
                         name="unit"
                         placeholder="Unit"
-                        value={newItem.unit}
+                        value={editingItem.unit}
                         onChange={handleInputChange}
                     />
                     <input
                         type="number"
                         name="reorder_level"
                         placeholder="Reorder Level"
-                        value={newItem.reorder_level}
+                        value={editingItem.reorder_level}
                         onChange={handleInputChange}
                     />
-                    <button type="button" onClick={handleAddNew}>Add Item</button>
+                    <button type="button" onClick={handleSaveEdit}>Save Changes</button>
                 </form>
             </div>
+        )}
+    </div>
 
-            {/* Inventory Table */}
-            <table>
-                <thead>
-                    <tr>
-                        <th onClick={() => handleSort('id')}>ID {sortConfig.key === 'id' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                        <th onClick={() => handleSort('name')}>Name {sortConfig.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                        <th onClick={() => handleSort('quantity')}>Quantity {sortConfig.key === 'quantity' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                        <th onClick={() => handleSort('unit')}>Unit {sortConfig.key === 'unit' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                        <th onClick={() => handleSort('reorder_level')}>Reorder Level {sortConfig.key === 'reorder_level' && (sortConfig.direction === 'asc' ? '↑' : '↓')}</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {inventory.map(item => (
-                        <tr key={item.id}>
-                            <td>{item.id}</td>
-                            <td>{item.name}</td>
-                            <td>{item.quantity}</td>
-                            <td>{item.unit}</td>
-                            <td>{item.reorder_level}</td>
-                            <td>
-                                <button onClick={() => handleEdit(item.id)}>Edit</button>
-                                <button onClick={() => handleDelete(item.id)}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-
-            {/* Edit Item Section */}
-            {editingItem && (
-                <div className="edit-item-section">
-                    <h2>Edit Item</h2>
-                    <form>
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="Name"
-                            value={editingItem.name}
-                            onChange={handleInputChange}
-                        />
-                        <input
-                            type="number"
-                            name="quantity"
-                            placeholder="Quantity"
-                            value={editingItem.quantity}
-                            onChange={handleInputChange}
-                        />
-                        <input
-                            type="text"
-                            name="unit"
-                            placeholder="Unit"
-                            value={editingItem.unit}
-                            onChange={handleInputChange}
-                        />
-                        <input
-                            type="number"
-                            name="reorder_level"
-                            placeholder="Reorder Level"
-                            value={editingItem.reorder_level}
-                            onChange={handleInputChange}
-                        />
-                        <button type="button" onClick={handleSaveEdit}>Save Changes</button>
-                        <button type="button" onClick={() => setEditingItem(null)}>Cancel</button>
-                    </form>
-                </div>
-            )}
-        </div>
     );
 };
 

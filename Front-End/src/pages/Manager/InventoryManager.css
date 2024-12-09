@@ -1,7 +1,11 @@
-
+/* InventoryManager - Block Level */
+.inventory-manager {
+    padding: 20px;
+    background-color: #f8f8f8;
+}
 
 /* Add Item Section */
-.add-item-section {
+.inventory-manager__add-item-section {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -9,8 +13,8 @@
     margin-bottom: 30px;
 }
 
-/* Inventory Table Styles */
-table {
+/* Inventory Table */
+.inventory-manager__table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
@@ -19,22 +23,40 @@ table {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-th, td {
+.inventory-manager__table th,
+.inventory-manager__table td {
     padding: 12px 15px;
     text-align: center;
     border-bottom: 1px solid #ddd;
 }
 
-th {
+.inventory-manager__table th {
     background-color: #4CAF50;
     color: white;
+    cursor: pointer;
+    text-align: left;
+    padding: 10px;
 }
 
-td {
+.inventory-manager__table th:hover {
+    background-color: #f0f0f0;
+}
+
+.inventory-manager__table th[data-sorted='asc']::after {
+    content: '↑';
+    margin-left: 5px;
+}
+
+.inventory-manager__table th[data-sorted='desc']::after {
+    content: '↓';
+    margin-left: 5px;
+}
+
+.inventory-manager__table td {
     background-color: #f9f9f9;
 }
 
-td button {
+.inventory-manager__table td button {
     background-color: #f44336;
     border-radius: 4px;
     padding: 6px 10px;
@@ -43,36 +65,12 @@ td button {
     transition: background-color 0.3s ease;
 }
 
-td button:hover {
+.inventory-manager__table td button:hover {
     background-color: #d32f2f;
 }
 
-th {
-    cursor: pointer;
-    padding: 10px;
-    text-align: left;
-}
-
-th:hover {
-    background-color: #f0f0f0;
-}
-
-th::after {
-    content: '';
-    margin-left: 5px;
-}
-
-th[data-sorted='asc']::after {
-    content: '↑';
-}
-
-th[data-sorted='desc']::after {
-    content: '↓';
-}
-
-
 /* Edit Item Form */
-.edit-item-form {
+.inventory-manager__edit-item-form {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -80,17 +78,16 @@ th[data-sorted='desc']::after {
     margin-top: 30px;
 }
 
-.edit-item-form input {
+.inventory-manager__edit-item-form input {
     margin-bottom: 10px;
 }
 
-/* Edit and Cancel Buttons */
-.edit-item-form button {
+.inventory-manager__edit-item-form button {
     margin-right: 10px;
 }
 
-/* Back Button Styles */
-.back-button {
+/* Back Button */
+.inventory-manager__back-button {
     background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
@@ -104,6 +101,6 @@ th[data-sorted='desc']::after {
     left: 20px;
 }
 
-.back-button:hover {
+.inventory-manager__back-button:hover {
     background-color: #45a049;
 }
