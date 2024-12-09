@@ -3,20 +3,35 @@ import './MenuBoard.css';
 import { useFetchData } from '../api/useFetchData';
 import { CircularProgress } from '@mui/material';
 
+/**
+ * MenuBoard Component
+ * Displays a categorized menu board with menu items and item components fetched from the API.
+ * Includes loading, error handling, and categorization logic for item components.
+ *
+ * @component
+ * @returns {JSX.Element} The menu board UI.
+ */
 const MenuBoard = () => {
-
+  // Fetch menu items and item components
   const { data: menuItems, loading: menuItemsLoading, error: menuItemsError } = useFetchData('menu-items');
   const { data: itemComponents, loading: itemComponentsLoading, error: itemComponentsError } = useFetchData('item-components');
 
-  // Filtered menu items with images
+  /**
+   * Filters menu items to only include those with images.
+   *
+   * @type {Array<Object>}
+   */
   const displayOnlyMenuItems = useMemo(() => {
     if (menuItemsLoading) return [];
     return menuItems.filter((menuItem) => menuItem.image !== null);
   }, [menuItems, menuItemsLoading]);
 
   /**
-   * Handles the click event for selecting a menu item.
-   * @param {Object} item - The menu item that was clicked.
+   * Adds an item to a map grouped by category.
+   *
+   * @param {Map<string, Array>} map - The map to update.
+   * @param {string} category - The category key for the item.
+   * @param {Object} item - The item to add.
    */
   const addToFilteredMap = (map, category, item) => {
     const items = map.get(category) || [];
@@ -24,11 +39,13 @@ const MenuBoard = () => {
   };
 
   /**
-   * Memoized value to filter item components into categories.
+   * Filters and groups item components by category.
+   * Categories are normalized (e.g., "entree" -> "entrees").
+   *
    * @type {Map<string, Array>}
    */
   const displayOnlyItemComponents = useMemo(() => {
-    if (itemComponentsLoading) return {};
+    if (itemComponentsLoading) return new Map();
     let filteredItemComponents = new Map();
     itemComponents.forEach((itemComponent) => {
       let category = itemComponent.category || 'other';
@@ -38,6 +55,7 @@ const MenuBoard = () => {
     return filteredItemComponents;
   }, [itemComponents, itemComponentsLoading]);
 
+  // Handle loading state
   if (menuItemsLoading || itemComponentsLoading) {
     return (
       <div className='loading-container'>
@@ -46,17 +64,16 @@ const MenuBoard = () => {
     );
   }
 
+  // Handle error state
   if (menuItemsError || itemComponentsError) {
     return <p>Error loading menu items or item components: {menuItemsError?.message || itemComponentsError?.message}</p>;
   }
 
-  const entrees = displayOnlyItemComponents.get("entrees");
-
-  const sides = displayOnlyItemComponents.get("side");
-
-  const appetizers = displayOnlyItemComponents.get("appetizer");
-
-  const drinks = displayOnlyItemComponents.get("drink");
+  // Extract categorized items
+  const entrees = displayOnlyItemComponents.get("entrees") || [];
+  const sides = displayOnlyItemComponents.get("side") || [];
+  const appetizers = displayOnlyItemComponents.get("appetizer") || [];
+  const drinks = displayOnlyItemComponents.get("drink") || [];
 
   return (
     <div className="menu-board-container">
@@ -88,7 +105,9 @@ const MenuBoard = () => {
               <img src={item.image} alt={item.name} />
               <div>
                 <h3>{item.name}</h3>
-                {item.extra_cost && parseFloat(item.extra_cost) > 0 ? <p>Premium Extra Cost: ${item.extra_cost}</p> : null}
+                {item.extra_cost && parseFloat(item.extra_cost) > 0 ? (
+                  <p>Premium Extra Cost: ${item.extra_cost}</p>
+                ) : null}
               </div>
             </div>
           ))}
@@ -100,7 +119,9 @@ const MenuBoard = () => {
             <div key={index} className="item">
               <img src={item.image} alt={item.name} />
               <h3>{item.name}</h3>
-              {item.extra_cost && parseFloat(item.extra_cost) > 0 ? <p>Premium Extra Cost: ${item.extra_cost}</p> : null}
+              {item.extra_cost && parseFloat(item.extra_cost) > 0 ? (
+                <p>Premium Extra Cost: ${item.extra_cost}</p>
+              ) : null}
             </div>
           ))}
         </div>
@@ -109,10 +130,12 @@ const MenuBoard = () => {
           <h2>Appetizers</h2>
           {appetizers.map((item, index) => (
             <div key={index} className="item">
-              <img src={item.image} alt={item.name}/>
+              <img src={item.image} alt={item.name} />
               <div>
                 <h3>{item.name}</h3>
-                {item.extra_cost && parseFloat(item.extra_cost) > 0 ? <p>Premium Extra Cost: ${item.extra_cost}</p> : null}
+                {item.extra_cost && parseFloat(item.extra_cost) > 0 ? (
+                  <p>Premium Extra Cost: ${item.extra_cost}</p>
+                ) : null}
               </div>
             </div>
           ))}
@@ -122,7 +145,9 @@ const MenuBoard = () => {
               <img src={item.image} alt={item.name} />
               <div>
                 <h3>{item.name}</h3>
-                {item.extra_cost && parseFloat(item.extra_cost) > 0 ? <p>Premium Extra Cost: ${item.extra_cost}</p> : null}
+                {item.extra_cost && parseFloat(item.extra_cost) > 0 ? (
+                  <p>Premium Extra Cost: ${item.extra_cost}</p>
+                ) : null}
               </div>
             </div>
           ))}

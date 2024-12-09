@@ -7,13 +7,38 @@ import './SalesReport.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+
+/**
+ * @description A React component that displays a sales report in the form of a bar chart.
+ * Allows users to filter the sales data by a custom date range.
+ * Displays a bar chart with sales data for the selected date range.
+ * Includes a back button to navigate to the previous page.
+ *
+ * @component
+ * @example
+ * return <SalesReport />;
+ */
 function SalesReport() {
+    
     const [salesData, setSalesData] = useState([]);
+
+   
     const [filteredSalesData, setFilteredSalesData] = useState([]);
+
+
     const [startDate, setStartDate] = useState('');
+
+
     const [endDate, setEndDate] = useState('');
+
+
     const navigate = useNavigate();
 
+    /**
+     * @description Fetches sales data from the server when the component mounts and formats the data.
+     * @async
+     * @function
+     */
     useEffect(() => {
         const fetchSales = async () => {
             try {
@@ -21,9 +46,7 @@ function SalesReport() {
                     ? 'http://localhost:5000'
                     : import.meta.env.VITE_POS_API_BASE_URL;
                 
-
                 const response = await axios.get(`${baseUrl}/api/sales`);
-                
 
                 // Format the date to only show YYYY-MM-DD (remove time)
                 const formattedData = response.data.map((sale) => ({
@@ -34,12 +57,17 @@ function SalesReport() {
                 setSalesData(formattedData);
                 setFilteredSalesData(formattedData); // Initially, show all sales data
             } catch (error) {
-                console.error('Error fetching sales data:', error); // Debugging log
+                console.error('Error fetching sales data:', error);
             }
         };
         fetchSales();
     }, []);
 
+    /**
+     * @description Filters the sales data based on the selected date range (start and end dates).
+     * Updates the filtered sales data state to display the filtered results.
+     * @function
+     */
     const handleDateFilter = () => {
         // Filter the sales data based on the selected date range
         const filtered = salesData.filter((sale) => {
@@ -52,6 +80,7 @@ function SalesReport() {
         setFilteredSalesData(filtered);
     };
 
+ 
     const chartData = {
         labels: filteredSalesData.map((data) => data.date),
         datasets: [
@@ -65,6 +94,7 @@ function SalesReport() {
         ],
     };
 
+ 
     const chartOptions = {
         responsive: true,
         plugins: {
@@ -101,6 +131,7 @@ function SalesReport() {
         },
     };
 
+ 
     if (salesData.length === 0) {
         return <p>Loading sales data...</p>;
     }

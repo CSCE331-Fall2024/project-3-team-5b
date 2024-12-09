@@ -2,6 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './EmployeeCSS.css';
 
+/**
+ * Employee Management Component
+ * Handles the display and management of employee data, including adding, editing, and deleting employees.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered Employee Management page with a table of employees and a form for adding or editing employees.
+ */
 function Employee() {
   const [employees, setEmployees] = useState([]);
   const [formData, setFormData] = useState({ name: '', hours_worked: '', password: '', manager_id: '' });
@@ -9,13 +16,18 @@ function Employee() {
   const navigate = useNavigate(); // Initialize the navigate function
   const baseUrl = window.location.hostname === 'localhost'
     ? 'http://localhost:5000'
-    : import.meta.env.VITE_POS_API_BASE_URL;
+    : import.meta.env.VITE_POS_API_BASE_URL;  // Determine the base URL based on the environment
 
-  // Fetch employees on component mount
+  /**
+   * Fetches the list of employees from the API.
+   */
   useEffect(() => {
     fetchEmployees();
   }, []);
 
+  /**
+   * Fetches employee data from the API and updates the employees state.
+   */
   const fetchEmployees = async () => {
     try {
       const response = await fetch(`${baseUrl}/api/employees`);
@@ -29,6 +41,12 @@ function Employee() {
     }
   };
 
+  /**
+   * Handles adding or editing an employee.
+   * If `editId` is set, the employee is updated; otherwise, a new employee is added.
+   * 
+   * @param {Event} e - The form submission event
+   */
   const handleAddOrEditEmployee = async (e) => {
     e.preventDefault();
     try {
@@ -57,6 +75,11 @@ function Employee() {
     }
   };
 
+  /**
+   * Handles deleting an employee.
+   * 
+   * @param {number} id - The ID of the employee to delete
+   */
   const handleDeleteEmployee = async (id) => {
     try {
       const response = await fetch(`${baseUrl}/api/employees/${id}`, {
@@ -73,6 +96,11 @@ function Employee() {
     }
   };
 
+  /**
+   * Handles editing an employee's details.
+   * 
+   * @param {Object} employee - The employee object to edit
+   */
   const handleEditClick = (employee) => {
     setEditId(employee.id);
     setFormData({
@@ -182,3 +210,4 @@ function Employee() {
 }
 
 export default Employee;
+

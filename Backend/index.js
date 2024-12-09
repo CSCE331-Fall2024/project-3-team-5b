@@ -1,6 +1,11 @@
-require('dotenv').config();  // Load environment variables from .env file
-const express = require('express');  // Import Express
-const cors = require('cors');  // Import CORS middleware
+/**
+ * @fileoverview Backend server for handling API requests and routing.
+ * Includes middleware setup, API endpoints, and database operations.
+ */
+
+require('dotenv').config(); // Load environment variables from .env file
+const express = require('express'); // Import Express
+const cors = require('cors'); // Import CORS middleware
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -9,29 +14,36 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
     'https://main.ddks64gk1t7cw.amplifyapp.com',
     'http://localhost:5173'
-  ];
+];
 
 const itemComponentsRoutes = require('./my-api/itemComponents');
 const inventoryRoutes = require('./my-api/inventory');
 const salesRoutes = require('./my-api/sales');
 
-  
+/**
+ * @description Middleware to enable Cross-Origin Resource Sharing (CORS).
+ */
 app.use(cors({
     origin: (origin, callback) => {
-    // Check if the request origin is in the allowed origins array
-    if (allowedOrigins.includes(origin) || !origin) {
-    callback(null, true); // Allow the request
-    } else {
-    callback(new Error('Not allowed by CORS')); // Block the request
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true); // Allow the request
+        } else {
+            callback(new Error('Not allowed by CORS')); // Block the request
+        }
     }
-}
 }));
-app.use(express.json());  // Parse JSON payloads
+
+/**
+ * @description Middleware to parse incoming JSON payloads.
+ */
+app.use(express.json()); // Parse JSON payloads
 
 // Import database connection
 const pool = require('./config/db');
 
-// Employees
+/**
+ * @description Retrieve all employees from the "cashier" table.
+ */
 app.get('/api/employees', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM cashier');
@@ -42,11 +54,14 @@ app.get('/api/employees', async (req, res) => {
     }
 });
 
-
+/**
+ * @description Update an employee's details by ID.
+ * @param {string} id - Employee ID from the URL.
+ */
 app.put('/api/employees/:id', async (req, res) => {
     try {
-        const { id } = req.params; // Extract the id from the URL
-        const { name, hours_worked, password, manager_id } = req.body; // Extract updated data from request body
+        const { id } = req.params;
+        const { name, hours_worked, password, manager_id } = req.body;
         const result = await pool.query(
             'UPDATE cashier SET name = $1, hours_worked = $2, password = $3, manager_id = $4 WHERE id = $5 RETURNING *',
             [name, hours_worked, password, manager_id, id]
@@ -54,14 +69,16 @@ app.put('/api/employees/:id', async (req, res) => {
         if (result.rowCount === 0) {
             return res.status(404).json({ error: 'Employee not found' });
         }
-        res.json(result.rows[0]); // Send back the updated employee
+        res.json(result.rows[0]);
     } catch (error) {
-        console.error('Error in PUT /my-api/employee/:id:', error);
+        console.error('Error in PUT /api/employees/:id:', error);
         res.status(500).send('Server error');
     }
 });
 
-
+/**
+ * @description Add a new employee to the "cashier" table.
+ */
 app.post('/api/employees', async (req, res) => {
     try {
         const { name, hours_worked, password, manager_id } = req.body;
@@ -76,21 +93,26 @@ app.post('/api/employees', async (req, res) => {
     }
 });
 
+/**
+ * @description Delete an employee by ID.
+ */
 app.delete('/api/employees/:id', async (req, res) => {
     try {
-        const { id } = req.params; // Extract the id from the URL
+        const { id } = req.params;
         const result = await pool.query('DELETE FROM cashier WHERE id = $1 RETURNING *', [id]);
         if (result.rowCount === 0) {
             return res.status(404).json({ error: 'Employee not found' });
         }
         res.json({ message: 'Employee deleted successfully', deletedEmployee: result.rows[0] });
     } catch (error) {
-        console.error('Error in DELETE /my-api/employee/:id:', error);
+        console.error('Error in DELETE /api/employees/:id:', error);
         res.status(500).send('Server error');
     }
 });
 
-// Menu Items
+/**
+ * @description Retrieve all menu items.
+ */
 app.get('/api/menu-items', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM menu_item ORDER BY id;');
@@ -100,10 +122,14 @@ app.get('/api/menu-items', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+/**
+ * @description Update a menu item's details by ID.
+ */
 app.put('/api/menu-items/:id', async (req, res) => {
     try {
-        const { id } = req.params; // Extract the id from the URL
-        const { name, base_price, description, image, maxentrees, maxsides, hasdrink } = req.body; // Extract updated data from request body
+        const { id } = req.params;
+        const { name, base_price, description, image, maxentrees, maxsides, hasdrink } = req.body;
 
         const result = await pool.query(
             `UPDATE menu_item 
@@ -116,15 +142,19 @@ app.put('/api/menu-items/:id', async (req, res) => {
             return res.status(404).json({ error: 'Menu item not found' });
         }
 
-        res.json(result.rows[0]); // Send back the updated menu item
+        res.json(result.rows[0]);
     } catch (error) {
         console.error('Error in PUT /api/menu-items/:id:', error);
         res.status(500).send('Server error');
     }
 });
+
+/**
+ * @description Delete a menu item by ID.
+ */
 app.delete('/api/menu-items/:id', async (req, res) => {
     try {
-        const { id } = req.params; // Extract the id from the URL
+        const { id } = req.params;
 
         const result = await pool.query('DELETE FROM menu_item WHERE id = $1 RETURNING *', [id]);
 
@@ -141,9 +171,13 @@ app.delete('/api/menu-items/:id', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+/**
+ * @description Add a new menu item.
+ */
 app.post('/api/menu-items', async (req, res) => {
     try {
-        const { name, base_price, description, image, maxentrees, maxsides, hasdrink } = req.body; // Extract fields from the request body
+        const { name, base_price, description, image, maxentrees, maxsides, hasdrink } = req.body;
 
         const result = await pool.query(
             `INSERT INTO menu_item (name, base_price, description, image, maxentrees, maxsides, hasdrink) 
@@ -152,21 +186,31 @@ app.post('/api/menu-items', async (req, res) => {
             [name, base_price, description, image, maxentrees, maxsides, hasdrink]
         );
 
-        res.status(201).json(result.rows[0]); // Send back the newly created menu item
+        res.status(201).json(result.rows[0]);
     } catch (error) {
         console.error('Error in POST /api/menu-items:', error);
         res.status(500).send('Server error');
     }
 });
 
-// Inventory
+/**
+ * @description Route handlers for inventory and item components.
+ */
 app.use('/api/inventory', inventoryRoutes);
-app.use('/api/item-components', itemComponentsRoutes);  // This will handle all /api/item-components routes
 
-//Sales
+app.use('/api/item-components', itemComponentsRoutes);
+
+
+/**
+ * @description Route handlers for sales.
+ */
 app.use('/api/sales', salesRoutes);
 
+/**
+ * @description Delete an image from Cloudinary.
+ */
 // Image deletion
+
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
@@ -188,8 +232,9 @@ app.post('/api/delete-image', async (req, res) => {
     }
 });
 
-
-// Start the server
+/**
+ * @description Start the server.
+ */
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

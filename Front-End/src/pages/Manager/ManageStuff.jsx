@@ -3,11 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import './ManageStuff.css';
 import { Weather } from './Weather';
 
+/**
+ * ManageStuff Component
+ * Provides a management dashboard with navigation buttons for managing inventory, sales, employees, menu, and ingredients.
+ * Also includes weather information based on the user's location.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered ManageStuff component.
+ */
 function ManageStuff() {
   const navigate = useNavigate();
   const [location, setLocation] = useState({ latitude: null, longitude: null });
   const [error, setError] = useState(null);
 
+  /**
+   * Fetches the user's location using the Geolocation API and updates the state.
+   * Handles errors if the location cannot be fetched or if permissions are denied.
+   */
   const fetchLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
