@@ -59,7 +59,7 @@ function Login() {
 
     var params = {
       'client_id': '296008456961-qhf5m6rddmlddcp4fscadh9seos56jus.apps.googleusercontent.com',
-      'redirect_uri': 'https://project-3-team-5b.onrender.com/manager',
+      'redirect_uri': 'https://main.ddks64gk1t7cw.amplifyapp.com/manager',
       'response_type': 'token',
       'scope': 'https://www.googleapis.com/auth/drive.metadata.readonly',
       'include_granted_scopes': 'true',
@@ -89,7 +89,7 @@ function Login() {
 
     var params = {
       'client_id': '296008456961-qhf5m6rddmlddcp4fscadh9seos56jus.apps.googleusercontent.com',
-      'redirect_uri': 'https://project-3-team-5b.onrender.com/cashier',
+      'redirect_uri': 'https://main.ddks64gk1t7cw.amplifyapp.com/cashier',
       'response_type': 'token',
       'scope': 'https://www.googleapis.com/auth/drive.metadata.readonly',
       'include_granted_scopes': 'true',
