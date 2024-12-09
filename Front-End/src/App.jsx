@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CustomerHome from './pages/Customer/CustomerHome';
-import ManagerHome from './pages/Manager/ManagerHome';
 import Login from './pages/Authentication/Login';
 import MenuPage from './pages/Customer/MenuPage';
 import MenuBoard from './pages/MenuBoard';
@@ -40,7 +39,7 @@ function AppContent() {
   return (
     <div> {/* Add a wrapper div here */}
       <Routes>
-        <Route path="/manager" element={<ManagerHome />} />
+        
         <Route path="/customer" element={<CustomerHome />} />
         <Route path="/cashier" element={<CashierHome />} />
         <Route path="/" element={<Login />} />

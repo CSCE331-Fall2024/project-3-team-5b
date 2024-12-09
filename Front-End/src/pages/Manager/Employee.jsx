@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './EmployeeCSS.css';
 
 function Employee() {
   const [employees, setEmployees] = useState([]);
   const [formData, setFormData] = useState({ name: '', hours_worked: '', password: '', manager_id: '' });
   const [editId, setEditId] = useState(null);
+  const navigate = useNavigate(); // Initialize the navigate function
   const baseUrl = window.location.hostname === 'localhost'
-  ? 'http://localhost:5000'
-  : import.meta.env.VITE_POS_API_BASE_URL;
+    ? 'http://localhost:5000'
+    : import.meta.env.VITE_POS_API_BASE_URL;
+
   // Fetch employees on component mount
   useEffect(() => {
     fetchEmployees();
@@ -83,6 +86,11 @@ function Employee() {
   return (
     <div className="employee">
       <h1>Employee Management</h1>
+
+      {/* Back Button */}
+      <button className="back-button" onClick={() => navigate(-1)}>
+        Back
+      </button>
 
       {/* Employee Table */}
       <table className="employee-table">

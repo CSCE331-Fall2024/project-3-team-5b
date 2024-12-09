@@ -18,7 +18,7 @@ function Login() {
 
   const onClickManagerHandler = () => {
     oauthSignInManager();
-    navigate('/manager');
+    navigate('/manage-stuff');
   };
 
   const onClickCustomerHandler = () => {
