@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import PropTypes, { object } from 'prop-types';
-import './MenuChoices.css';
+import PropTypes, { object } from "prop-types";
+import "./MenuChoices.css";
 
 /**
  * Component for displaying and managing menu item selections.
@@ -11,34 +11,32 @@ import './MenuChoices.css';
  * @param {function} props.onContinue - Callback function triggered when the continue button is clicked.
  * @returns {JSX.Element} The MenuChoices component.
  */
-export default function MenuChoices({ menuItemSelection, itemComponents, view, onContinue}) {
-    /** @type {Array} State to manage the selected menu choices */
+export default function MenuChoices({ menuItemSelection, itemComponents, view, onContinue }) {
     const [selectedMenuChoices, setSelectedMenuChoices] = useState([]);
-    /** @type {string} State to manage the label of the action button */
     const [buttonLabel, setButtonLabel] = useState("");
-    /** @type {number} State to manage the maximum number of choices allowed */
     const [maxChoices, setMaxChoices] = useState(1);
-    /** @type {string} State to manage the title displayed for the selection view */
     const [title, setTitle] = useState("");
-    /** @type {Array} State to manage the list of item components to display */
     const [displayItemComponents, setDisplayItemComponents] = useState([]);
     const [isSelected, setIsSelected] = useState(true);
     const [popupOpen, setPopupOpen] = useState(false);
     const [nutritionIndex, setNutritionIndex] = useState(-1);
+    const [reviewPopupOpen, setReviewPopupOpen] = useState(false);
+    const [reviewIndex, setReviewIndex] = useState(-1);
+    const [averageRating, setAverageRating] = useState(null);
+    const [newRating, setNewRating] = useState(5);
 
     const showAllergens = (itemComponent) => {
-        if(itemComponent.allergens.length > 0)
-        {
+        if (itemComponent.allergens.length > 0) {
             let allergenMessage = "This item contains the following allergens: ";
-            for(let i = 0; i < itemComponent.allergens.length; i++)
-            {
-                if(itemComponent.allergens[i] == "")
-                    return;
-                if(i == itemComponent.allergens.length - 1 && itemComponent.allergens.length > 1)
+            for (let i = 0; i < itemComponent.allergens.length; i++) {
+                if (itemComponent.allergens[i] === "") return;
+                if (i === itemComponent.allergens.length - 1 && itemComponent.allergens.length > 1) {
                     allergenMessage += " and ";
+                }
                 allergenMessage += itemComponent.allergens[i];
-                if(i != itemComponent.allergens.length - 1 && i != itemComponent.allergens.length - 2)
+                if (i !== itemComponent.allergens.length - 1 && i !== itemComponent.allergens.length - 2) {
                     allergenMessage += ", ";
+                }
             }
             alert(allergenMessage);
         }
@@ -47,22 +45,72 @@ export default function MenuChoices({ menuItemSelection, itemComponents, view, o
     const openPopup = (index) => {
         setNutritionIndex(index);
         setPopupOpen(true);
-    }
+    };
 
     const closePopup = () => {
         setPopupOpen(false);
         setNutritionIndex(-1);
-    }
-    /**
-     * useEffect hook to set max number of choices, title, and displayed items based on the current view.
-     */
-    useEffect(() => {
-        if (!menuItemSelection || Object.keys(menuItemSelection).length === 0){
-            return;
+    };
+
+
+    const closeReviewPopup = () => {
+        setReviewPopupOpen(false);
+        setReviewIndex(-1);
+        setAverageRating(null);
+        setNewRating(5);
+    };
+
+    const handleRatingChange = (e) => {
+        setNewRating(parseInt(e.target.value));
+    };
+
+    const openReviewPopup = async (id) => {
+        setReviewIndex(id);
+        setReviewPopupOpen(true);
+    
+        try {
+            const response = await fetch(`/api/reviews/${id}/average`);
+
+            const data = await response.json();
+    
+            if (data && data.averageRating) {
+                setAverageRating(parseFloat(data.averageRating));
+            } else {
+                setAverageRating(null);
+            }
+        } catch (error) {
+            console.error('Failed to fetch reviews', error);
         }
+    };
+
+    const submitReview = async () => {
+        try {
+            const mic = reviewIndex;
+            const response = await fetch('/api/reviews', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mic, rating: newRating }),
+            });
+    
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Review submitted successfully:', result);
+                setAverageRating(newRating);
+                closeReviewPopup();
+            } else {
+                console.error('Failed to submit review');
+            }
+        } catch (error) {
+            console.error('Error submitting review:', error);
+        }
+    };
+    
+    
+
+    useEffect(() => {
+        if (!menuItemSelection || Object.keys(menuItemSelection).length === 0) return;
 
         let updatedMaxChoices;
-
         if (view === "drink" || view === "appetizer" || view === "A La Carte") {
             updatedMaxChoices = 1;
         } else if (view === "side") {
@@ -72,38 +120,21 @@ export default function MenuChoices({ menuItemSelection, itemComponents, view, o
         }
         setMaxChoices(updatedMaxChoices);
 
-        if (view === "A La Carte"){
+        if (view === "A La Carte") {
             setDisplayItemComponents([...itemComponents.get("side"), ...itemComponents.get("entrees")]);
             setTitle(`Select ${updatedMaxChoices} Side or Entree`);
-        } else{
+        } else {
             setDisplayItemComponents(itemComponents.get(view));
             setTitle(`Select ${updatedMaxChoices} ${view.charAt(0).toUpperCase() + view.slice(1)}`);
         }
-        setSelectedMenuChoices([])
-    }, [itemComponents, view, menuItemSelection, setMaxChoices]);
+        setSelectedMenuChoices([]);
+    }, [itemComponents, view, menuItemSelection]);
 
-    /**
-     * useEffect hook to set the button label based on the current view and menu item selection.
-     */
-    useEffect(() => {
-        if (view === "A La Carte" || view === "appetizer" || view === "drink" || (view === "entrees" && menuItemSelection?.menuItem?.name !== "Panda Bundle")) {
-            setButtonLabel("Add Selection to Cart");
-        } else {
-            setButtonLabel("Continue");
-        }
-    }, [view, menuItemSelection]);
-
-    /**
-     * Toggles the selection of a menu choice.
-     * @param {Object} menuChoice - The menu choice to be toggled.
-     */
     const toggleMenuChoice = (menuChoice) => {
-        if(isSelected)
-            showAllergens(menuChoice);
-        setIsSelected(prevState => !prevState);
+        setIsSelected((prevState) => !prevState);
         setSelectedMenuChoices((prevChoices) => {
             if (prevChoices.includes(menuChoice)) {
-                return prevChoices.filter(choice => choice.name !== menuChoice.name);
+                return prevChoices.filter((choice) => choice.name !== menuChoice.name);
             } else if (prevChoices.length < maxChoices) {
                 return [...prevChoices, menuChoice];
             }
@@ -111,9 +142,6 @@ export default function MenuChoices({ menuItemSelection, itemComponents, view, o
         });
     };
 
-    /**
-     * Handles the click event for the continue button.
-     */
     const handleContinue = () => {
         setIsSelected(true);
         if (selectedMenuChoices.length > 0) {
@@ -122,10 +150,9 @@ export default function MenuChoices({ menuItemSelection, itemComponents, view, o
         }
     };
 
-    // Render fallback message if no menu item selection is available
     if (!menuItemSelection || Object.keys(menuItemSelection).length === 0) {
         return <div className="font-bold text-2xl">Select Menu Item</div>;
-    }    
+    }  
 
     return (
         <div className="menu-choices">
@@ -137,6 +164,10 @@ export default function MenuChoices({ menuItemSelection, itemComponents, view, o
                         <button className="bg-black text-white mt-2 -ml-32 w-64 rounded-xl py-2 z-40 flex-wrap overflow-auto absolute" onClick={() => openPopup(itemComponent.id)}>
                             Nutrition
                         </button>
+                        <button className="bg-green-500 text-white mt-2 mb-0 w-32 rounded-md py-1 absolute bottom-24 left-1/2 transform -translate-x-1/2" onClick={() => openReviewPopup(itemComponent.id)}>
+                            Reviews
+                        </button>
+
                         <button 
                             key={index} 
                             className={`choice-item ${selectedMenuChoices.some(choice => choice.name === itemComponent.name) ? 'selected' : ''}`} 
@@ -217,6 +248,23 @@ export default function MenuChoices({ menuItemSelection, itemComponents, view, o
                                 </button>
                             </div>
                         )}
+                        {reviewPopupOpen && reviewIndex === itemComponent.id && (
+                        <div className="review-popup">
+                            <p>Average Rating: {averageRating}</p>
+                            <label>
+                                Leave a Rating (1-5):
+                                <select value={newRating} onChange={handleRatingChange}>
+                                    {[1, 2, 3, 4, 5].map((num) => (
+                                        <option key={num} value={num}>
+                                            {num}
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
+                            <button onClick={submitReview}>Submit Review</button>
+                            <button onClick={closeReviewPopup}>Close</button>
+                        </div>
+                    )}
                     </div>
                 ))}
             </div>
